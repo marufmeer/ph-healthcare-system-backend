@@ -1,0 +1,126 @@
+
+
+/* ================= USER ================= */
+
+model User {
+  userId        String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  password      String?
+  role          Role[]  
+  activeRole    UserRole  @default(USER)    
+  phoneNumber   String?  @unique
+  profilePhoto  String?
+  status        UserStatus @default(ACTIVE)
+  isVerified    Boolean  @default(false)
+  tokenVersion  Int       @default(0)
+  needPasswordChange Boolean @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  authProvider  AuthProvider[]
+  doctor        Doctor?
+  patient       Patient?
+  admin         Admin?
+  assistant     Assistant?
+
+  @@map("users")
+}
+
+
+/* ================= MULTIPLE ROLE ================= */
+model Role {
+  roleId String @id @default(uuid())
+  userId String
+   name   UserRole 
+  user    User    @relation(fields: [userId], references: [userId], onDelete: Cascade)
+ @@unique([userId, name])
+  @@map("roles")
+}
+/* ================= DOCTOR ================= */
+
+model Doctor {
+  doctorId               String   @id @default(uuid())
+  userId                 String   @unique
+  gender                 Gender
+  dateOfBirth            DateTime
+  registrationNumber     String   @unique 
+   specializations        DoctorSpecialization[]
+  qualification          String
+  experienceYears        Int
+  currentWorkingPlace    String
+  designation            String
+  consultationFee        Float?
+  averageRating          Float?
+  status                 Status  @default(PENDING)
+  isDeleted     Boolean  @default(false)
+  user                   User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@map("doctors")
+}
+
+/* ================= PATIENT ================= */
+
+model Patient {
+  patientId         String   @id @default(uuid())
+  userId             String   @unique
+  gender             Gender
+  dateOfBirth         DateTime
+  bloodGroup          BloodGroup
+  hasAllergies        Boolean?      @default(false)
+  hasDiabetes         Boolean?      @default(false)
+  height              Int
+  weight              Int
+  smokingStatus       Boolean?      @default(false)
+  dietaryPreferences  String?
+  pregnancyStatus     Boolean?      @default(false)
+  mentalHealthHistory String?
+  immunizationStatus  String?
+  hasPastSurgeries    Boolean?      @default(false)
+  recentAnxiety       Boolean?      @default(false)
+  recentDepression    Boolean?      @default(false)
+  maritalStatus       MaritalStatus @default(UNMARRIED)
+  isDeleted     Boolean  @default(false)
+  user              User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  medicalReport MedicalReport[]
+  @@map("patients")
+}
+
+/* ================= ADMIN ================= */
+
+model Admin {
+  adminId   String @id @default(uuid())
+  userId    String @unique
+  isDeleted  Boolean  @default(false)
+  user      User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@map("admins")
+}
+
+/* ================= ASSISTANT ================= */
+
+model Assistant {
+  assistantId     String @id @default(uuid())
+  userId          String @unique
+  registrationNumber String   @unique 
+  gender          Gender
+  specializations  AssistantSpecialization[]
+  qualification   String
+  assistedFee     Float?
+  averageRating   Float?
+   status                 Status  @default(PENDING)
+  level           Level  @default(JUNIOR_ASSISTANT)
+  isDeleted     Boolean  @default(false)
+  user            User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@map("assistants")
+}
+
+/* ================= AUTHPROVIDER ================= */
+model AuthProvider {
+  authProviderId String            @id @default(uuid())
+  userId         String
+  provider       AuthProviderType
+user           User              @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@map("auth_providers")
+}

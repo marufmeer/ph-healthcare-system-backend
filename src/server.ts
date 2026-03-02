@@ -1,18 +1,19 @@
 import { Server } from "http";
 import app from "./app";
-import dotenv from "dotenv";
 
-
-
-dotenv.config();
+import { envVars } from "./config";
+import redisConnect from "./config/redis.config";
+import { seedSuperAdmin } from "./app/helpers/seedSuperAdmin";
 
  const bootStrap=async()=>{
 let server:Server
-const PORT = Number(process.env.PORT) 
+const PORT = Number(envVars.PORT) 
   try{
    server=app.listen(PORT, () => {
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+  console.log(`Server running in ${envVars.NODE_ENV} mode on port ${PORT}`);
 }); 
+ await seedSuperAdmin()
+await redisConnect()
     const shutdown=async(signal:string)=>{
           console.log(`🛑 ${signal} received. Shutting down...`)
        if(server){
@@ -24,8 +25,7 @@ const PORT = Number(process.env.PORT)
        else{
         process.exit(0)
        }
-      //  await prisma.$disconnect()
-      //  console.log("Database  disconnected.")
+     
     } 
 
     process.on("SIGTERM",shutdown)

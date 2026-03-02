@@ -1,0 +1,43 @@
+/* ================= Specialization ================= */
+model Specialization{
+  specializationId String @id  @default(uuid())
+  name String 
+  categoryId String 
+isActive     Boolean @default(true)
+  category Category @relation(fields: [categoryId],references: [categoryId],onDelete: Cascade)
+  doctors         DoctorSpecialization[]
+  assistants      AssistantSpecialization[]
+   @@unique([name, categoryId])
+  @@index([categoryId])
+   @@map("specializations")
+}
+model DoctorSpecialization {
+  id               String @id @default(uuid())
+  doctorId         String
+  specializationId String
+  doctor           Doctor         @relation(fields: [doctorId], references: [doctorId], onDelete: Cascade)
+  specialization   Specialization @relation(fields: [specializationId], references: [specializationId], onDelete: Cascade)
+
+  @@unique([doctorId, specializationId])
+  @@map("doctor_specializations")
+}
+model AssistantSpecialization {
+  id               String @id @default(uuid())
+  assistantId        String
+  specializationId String
+  assistant         Assistant        @relation(fields: [assistantId], references: [assistantId], onDelete: Cascade)
+  specialization   Specialization @relation(fields: [specializationId], references: [specializationId], onDelete: Cascade)
+
+  @@unique([assistantId, specializationId])
+  @@map("assistant_specializations")
+}
+
+/* ================= SPECIALIZATION CATEGORY ================= */
+model Category {
+ categoryId String @id @default(uuid())
+ categoryName String @unique 
+ icon         String?
+isActive     Boolean @default(true)
+specializations Specialization[]
+   @@map("categories")
+}

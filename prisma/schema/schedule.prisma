@@ -1,0 +1,13 @@
+
+model Schedule {
+  id            String   @id @default(uuid())
+  doctorId      String
+  date          DateTime   // date of the slot
+  startTime     DateTime
+  endTime       DateTime
+  duration      Int
+  status        ScheduleStatus @default(AVAILABLE)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+@@index([doctorId, date])
+}
