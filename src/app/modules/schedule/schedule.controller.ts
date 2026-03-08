@@ -5,7 +5,7 @@ import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status-codes"
 
 const scheduleGenerate=catchAsync(async (req: Request, res: Response)=>{
-const result=scheduleServices.scheduleGenerate(req.body)
+const result=await scheduleServices.scheduleGenerate(req)
  sendResponse(res,{
   success:true,
   statusCode:httpStatus.OK,

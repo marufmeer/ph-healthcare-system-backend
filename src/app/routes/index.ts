@@ -40,7 +40,7 @@ const moduleRoutes=[
         route:CategoryRoutes
     },
     {
-        path:"schedule",
+        path:"/schedule",
         route:scheduleRoutes
     }
 ]
